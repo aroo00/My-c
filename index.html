@@ -686,7 +686,7 @@ window.addEventListener('scroll', () => {
 });
 
 // MESSAGE FORM
-function sendMessage() {
+async function sendMessage() {
   const name    = document.getElementById('msgName').value.trim();
   const email   = document.getElementById('msgEmail').value.trim();
   const subject = document.getElementById('msgSubject').value.trim();
@@ -699,12 +699,42 @@ function sendMessage() {
     return;
   }
 
-  const mailto = `mailto:vimukthiarosha123@gmail.com?subject=${encodeURIComponent(subject || 'Portfolio Contact — ' + name)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + body)}`;
-  window.location.href = mailto;
+  status.textContent = '⟳ Sending transmission...';
+  status.className = 'msg-status';
 
-  status.textContent = '✔ Transmission ready — your email client will open!';
-  status.className = 'msg-status success';
+  const response = await fetch('https://formspree.io/f/xbdzewoa', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, subject, message: body })
+  });
+
+  if (response.ok) {
+    status.textContent = '✔ Transmission sent — message received!';
+    status.className = 'msg-status success';
+    document.getElementById('msgName').value = '';
+    document.getElementById('msgEmail').value = '';
+    document.getElementById('msgSubject').value = '';
+    document.getElementById('msgBody').value = '';
+  } else {
+    status.textContent = '⚠ ERROR — Transmission failed. Try again.';
+    status.className = 'msg-status error';
+  }
 }
+```
+
+---
+
+**Then replace `YOUR_FORM_ID` with your real ID. Here's how to get it:**
+
+1. Go to **formspree.io** and create a free account
+2. Click **New Form**
+3. Enter your email `vimukthiarosha123@gmail.com`
+4. Copy the form ID — it looks like `xpwzqkrb`
+5. Replace `YOUR_FORM_ID` in the code with it
+
+So the URL becomes something like:
+```
+https://formspree.io/f/xpwzqkrb
 </script>
 </body>
 </html>
